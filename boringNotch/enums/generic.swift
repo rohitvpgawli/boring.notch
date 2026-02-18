@@ -29,6 +29,11 @@ public enum NotchViews {
     case shelf
 }
 
+enum RightPanelMode {
+    case calendar
+    case pomodoro
+}
+
 enum SettingsEnum {
     case general
     case about

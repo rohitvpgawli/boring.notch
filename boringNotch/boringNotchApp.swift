@@ -349,6 +349,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
         }
 
+        NotificationCenter.default.addObserver(
+            forName: .pomodoroTimerFinished, object: nil, queue: nil
+        ) { [weak self] _ in
+            Task { @MainActor in
+                guard let self = self else { return }
+                self.coordinator.rightPanelMode = .pomodoro
+                if Defaults[.showOnAllDisplays] {
+                    for (_, viewModel) in self.viewModels {
+                        if viewModel.notchState == .closed {
+                            viewModel.open()
+                        }
+                    }
+                } else {
+                    if self.vm.notchState == .closed {
+                        self.vm.open()
+                    }
+                }
+            }
+        }
+
         KeyboardShortcuts.onKeyDown(for: .toggleSneakPeek) { [weak self] in
             guard let self = self else { return }
             if Defaults[.sneakPeekStyles] == .inline {

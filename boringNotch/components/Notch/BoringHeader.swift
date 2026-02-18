@@ -58,6 +58,24 @@ struct BoringHeader: View {
                             }
                             .buttonStyle(PlainButtonStyle())
                         }
+                        if Defaults[.showPomodoro] && Defaults[.showCalendar] {
+                            Button(action: {
+                                withAnimation(.smooth) {
+                                    coordinator.rightPanelMode = coordinator.rightPanelMode == .calendar ? .pomodoro : .calendar
+                                }
+                            }) {
+                                Capsule()
+                                    .fill(.black)
+                                    .frame(width: 30, height: 30)
+                                    .overlay {
+                                        Image(systemName: coordinator.rightPanelMode == .pomodoro ? "calendar" : "timer")
+                                            .foregroundColor(coordinator.rightPanelMode == .pomodoro ? .white : .white)
+                                            .padding()
+                                            .imageScale(.medium)
+                                    }
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
                         if Defaults[.settingsIconInNotch] {
                             Button(action: {
                                 SettingsWindowController.shared.showWindow()

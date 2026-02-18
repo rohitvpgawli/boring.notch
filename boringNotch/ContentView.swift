@@ -20,6 +20,7 @@ struct ContentView: View {
 
     @ObservedObject var coordinator = BoringViewCoordinator.shared
     @ObservedObject var musicManager = MusicManager.shared
+    @ObservedObject var pomodoroManager = PomodoroManager.shared
     @ObservedObject var batteryModel = BatteryStatusViewModel.shared
     @ObservedObject var brightnessManager = BrightnessManager.shared
     @ObservedObject var volumeManager = VolumeManager.shared
@@ -285,6 +286,9 @@ struct ContentView: View {
                       } else if coordinator.sneakPeek.show && Defaults[.inlineHUD] && (coordinator.sneakPeek.type != .music) && (coordinator.sneakPeek.type != .battery) && vm.notchState == .closed {
                           InlineHUD(type: $coordinator.sneakPeek.type, value: $coordinator.sneakPeek.value, icon: $coordinator.sneakPeek.icon, hoverAnimation: $isHovering, gestureProgress: $gestureProgress)
                               .transition(.opacity)
+                      } else if !coordinator.expandingView.show && vm.notchState == .closed && (pomodoroManager.state == .running || pomodoroManager.state == .paused) && !vm.hideOnClosed {
+                          PomodoroLiveActivity()
+                              .frame(alignment: .center)
                       } else if (!coordinator.expandingView.show || coordinator.expandingView.type == .music) && vm.notchState == .closed && (musicManager.isPlaying || !musicManager.isPlayerIdle) && coordinator.musicLiveActivityEnabled && !vm.hideOnClosed {
                           MusicLiveActivity()
                               .frame(alignment: .center)
@@ -475,6 +479,45 @@ struct ContentView: View {
                     0,
                     vm.effectiveClosedNotchHeight - 12
                 ),
+                alignment: .center
+            )
+        }
+        .frame(
+            height: vm.effectiveClosedNotchHeight,
+            alignment: .center
+        )
+    }
+
+    @ViewBuilder
+    func PomodoroLiveActivity() -> some View {
+        HStack {
+            HStack(spacing: 4) {
+                Image(systemName: "timer")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.green)
+                Text(String(format: "%d:%02d", pomodoroManager.displayMinutes, pomodoroManager.displaySeconds))
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundColor(.green)
+                    .contentTransition(.numericText())
+                    .animation(.snappy, value: pomodoroManager.remainingSeconds)
+            }
+            .frame(width: 76, alignment: .leading)
+
+            Rectangle()
+                .fill(.black)
+                .frame(width: vm.closedNotchSize.width + -cornerRadiusInsets.closed.top)
+
+            HStack {
+                Circle()
+                    .fill(pomodoroManager.state == .running ? Color.green : Color.orange)
+                    .frame(width: 8, height: 8)
+                    .opacity(pomodoroManager.state == .running ? 1 : 0.8)
+                    .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: pomodoroManager.state == .running)
+            }
+            .frame(
+                width: max(0, vm.effectiveClosedNotchHeight - 12),
+                height: max(0, vm.effectiveClosedNotchHeight - 12),
                 alignment: .center
             )
         }

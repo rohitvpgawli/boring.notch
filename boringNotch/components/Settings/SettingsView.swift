@@ -719,6 +719,10 @@ struct CalendarSettings: View {
             Defaults.Toggle(key: .showCalendar) {
                 Text("Show calendar")
             }
+            Defaults.Toggle(key: .showPomodoro) {
+                Text("Show Pomodoro timer")
+            }
+            .disabled(!showCalendar)
             Defaults.Toggle(key: .hideCompletedReminders) {
                 Text("Hide completed reminders")
             }
