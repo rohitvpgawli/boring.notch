@@ -31,6 +31,7 @@ struct ContentView: View {
     @State private var gestureProgress: CGFloat = .zero
 
     @State private var haptics: Bool = false
+    @State private var blinkingLiveActivity: Bool = false
 
     @Namespace var albumArtNamespace
 
@@ -286,7 +287,7 @@ struct ContentView: View {
                       } else if coordinator.sneakPeek.show && Defaults[.inlineHUD] && (coordinator.sneakPeek.type != .music) && (coordinator.sneakPeek.type != .battery) && vm.notchState == .closed {
                           InlineHUD(type: $coordinator.sneakPeek.type, value: $coordinator.sneakPeek.value, icon: $coordinator.sneakPeek.icon, hoverAnimation: $isHovering, gestureProgress: $gestureProgress)
                               .transition(.opacity)
-                      } else if !coordinator.expandingView.show && vm.notchState == .closed && (pomodoroManager.state == .running || pomodoroManager.state == .paused) && !vm.hideOnClosed {
+                      } else if !coordinator.expandingView.show && vm.notchState == .closed && (pomodoroManager.state == .running || pomodoroManager.state == .paused || pomodoroManager.state == .finished) && !vm.hideOnClosed {
                           PomodoroLiveActivity()
                               .frame(alignment: .center)
                       } else if (!coordinator.expandingView.show || coordinator.expandingView.type == .music) && vm.notchState == .closed && (musicManager.isPlaying || !musicManager.isPlayerIdle) && coordinator.musicLiveActivityEnabled && !vm.hideOnClosed {
@@ -490,18 +491,24 @@ struct ContentView: View {
 
     @ViewBuilder
     func PomodoroLiveActivity() -> some View {
+        let isFinished = pomodoroManager.state == .finished
+        let activeColor: Color = isFinished ? .red : .green
+
         HStack {
             HStack(spacing: 4) {
                 Image(systemName: "timer")
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(.green)
-                Text(String(format: "%d:%02d", pomodoroManager.displayMinutes, pomodoroManager.displaySeconds))
+                    .foregroundColor(activeColor)
+                Text(isFinished
+                     ? "0:00"
+                     : String(format: "%d:%02d", pomodoroManager.displayMinutes, pomodoroManager.displaySeconds))
                     .font(.system(size: 12, weight: .medium, design: .rounded))
                     .monospacedDigit()
-                    .foregroundColor(.green)
+                    .foregroundColor(activeColor)
                     .contentTransition(.numericText())
                     .animation(.snappy, value: pomodoroManager.remainingSeconds)
             }
+            .opacity(isFinished ? (blinkingLiveActivity ? 0.2 : 1.0) : 1.0)
             .frame(width: 76, alignment: .leading)
 
             Rectangle()
@@ -510,10 +517,9 @@ struct ContentView: View {
 
             HStack {
                 Circle()
-                    .fill(pomodoroManager.state == .running ? Color.green : Color.orange)
+                    .fill(isFinished ? Color.red : (pomodoroManager.state == .running ? Color.green : Color.orange))
                     .frame(width: 8, height: 8)
-                    .opacity(pomodoroManager.state == .running ? 1 : 0.8)
-                    .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: pomodoroManager.state == .running)
+                    .opacity(isFinished ? (blinkingLiveActivity ? 0.2 : 1.0) : (pomodoroManager.state == .running ? 1 : 0.8))
             }
             .frame(
                 width: max(0, vm.effectiveClosedNotchHeight - 12),
@@ -525,6 +531,24 @@ struct ContentView: View {
             height: vm.effectiveClosedNotchHeight,
             alignment: .center
         )
+        .onAppear {
+            if isFinished {
+                withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                    blinkingLiveActivity = true
+                }
+            }
+        }
+        .onChange(of: pomodoroManager.state) { _, newState in
+            if newState == .finished {
+                withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                    blinkingLiveActivity = true
+                }
+            } else {
+                withAnimation(.default) {
+                    blinkingLiveActivity = false
+                }
+            }
+        }
     }
 
     @ViewBuilder

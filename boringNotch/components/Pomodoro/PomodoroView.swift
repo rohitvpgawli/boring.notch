@@ -10,13 +10,14 @@ import SwiftUI
 
 struct PomodoroView: View {
     @ObservedObject var pomodoroManager = PomodoroManager.shared
+    @State private var isBlinking: Bool = false
 
     var body: some View {
         VStack(spacing: 8) {
-            Text("Focus")
+            Text(pomodoroManager.state == .finished ? "Time's Up!" : "Focus")
                 .font(.system(.subheadline, design: .rounded))
                 .fontWeight(.semibold)
-                .foregroundColor(.green)
+                .foregroundColor(pomodoroManager.state == .finished ? .red : .green)
 
             HStack(spacing: 12) {
                 Button {
@@ -31,10 +32,11 @@ struct PomodoroView: View {
 
                 Text(timeDisplay)
                     .font(.system(size: 48, weight: .medium, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(pomodoroManager.state == .finished ? .red : .white)
                     .monospacedDigit()
                     .contentTransition(.numericText())
                     .animation(.snappy, value: pomodoroManager.remainingSeconds)
+                    .opacity(pomodoroManager.state == .finished ? (isBlinking ? 0.3 : 1.0) : 1.0)
 
                 Button {
                     pomodoroManager.incrementDuration()
@@ -50,6 +52,17 @@ struct PomodoroView: View {
             actionButton
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onChange(of: pomodoroManager.state) { _, newState in
+            if newState == .finished {
+                withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                    isBlinking = true
+                }
+            } else {
+                withAnimation(.default) {
+                    isBlinking = false
+                }
+            }
+        }
     }
 
     private var canAdjust: Bool {
@@ -130,7 +143,8 @@ struct PomodoroView: View {
             VStack(spacing: 4) {
                 Text("Done!")
                     .font(.system(.headline, design: .rounded))
-                    .foregroundColor(.green)
+                    .foregroundColor(.red)
+                    .opacity(isBlinking ? 0.3 : 1.0)
                 Button {
                     pomodoroManager.reset()
                 } label: {

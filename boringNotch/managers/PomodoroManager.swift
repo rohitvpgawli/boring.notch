@@ -23,14 +23,15 @@ class PomodoroManager: ObservableObject {
 
     @Published var state: PomodoroState = .idle
     @Published var remainingSeconds: Int = 25 * 60
-    @Published var selectedMinutes: Int = Defaults[.pomodoroDuration]
+    @Published var selectedDurationSeconds: Int = Defaults[.pomodoroDuration]
 
-    static let availableDurations = [5, 10, 15, 20, 25, 30, 45, 60]
+    // Durations in seconds: 30s, 1m, 2m, 5m, 10m, 15m, 20m, 25m, 30m, 45m, 60m
+    static let availableDurations: [Int] = [30, 60, 120, 300, 600, 900, 1200, 1500, 1800, 2700, 3600]
 
     private var timerCancellable: AnyCancellable?
 
     private init() {
-        remainingSeconds = selectedMinutes * 60
+        remainingSeconds = selectedDurationSeconds
     }
 
     var displayMinutes: Int {
@@ -42,38 +43,46 @@ class PomodoroManager: ObservableObject {
     }
 
     var progress: Double {
-        let total = Double(selectedMinutes * 60)
+        let total = Double(selectedDurationSeconds)
         guard total > 0 else { return 0 }
         return 1.0 - (Double(remainingSeconds) / total)
     }
 
+    var durationLabel: String {
+        if selectedDurationSeconds < 60 {
+            return "\(selectedDurationSeconds)s"
+        } else {
+            return "\(selectedDurationSeconds / 60)m"
+        }
+    }
+
     func incrementDuration() {
         guard state == .idle || state == .finished else { return }
-        if let currentIndex = Self.availableDurations.firstIndex(of: selectedMinutes),
+        if let currentIndex = Self.availableDurations.firstIndex(of: selectedDurationSeconds),
            currentIndex < Self.availableDurations.count - 1 {
-            selectedMinutes = Self.availableDurations[currentIndex + 1]
-        } else if !Self.availableDurations.contains(selectedMinutes) {
-            selectedMinutes = Self.availableDurations.last ?? 60
+            selectedDurationSeconds = Self.availableDurations[currentIndex + 1]
+        } else if !Self.availableDurations.contains(selectedDurationSeconds) {
+            selectedDurationSeconds = Self.availableDurations.last ?? 3600
         }
-        remainingSeconds = selectedMinutes * 60
-        Defaults[.pomodoroDuration] = selectedMinutes
+        remainingSeconds = selectedDurationSeconds
+        Defaults[.pomodoroDuration] = selectedDurationSeconds
     }
 
     func decrementDuration() {
         guard state == .idle || state == .finished else { return }
-        if let currentIndex = Self.availableDurations.firstIndex(of: selectedMinutes),
+        if let currentIndex = Self.availableDurations.firstIndex(of: selectedDurationSeconds),
            currentIndex > 0 {
-            selectedMinutes = Self.availableDurations[currentIndex - 1]
-        } else if !Self.availableDurations.contains(selectedMinutes) {
-            selectedMinutes = Self.availableDurations.first ?? 5
+            selectedDurationSeconds = Self.availableDurations[currentIndex - 1]
+        } else if !Self.availableDurations.contains(selectedDurationSeconds) {
+            selectedDurationSeconds = Self.availableDurations.first ?? 30
         }
-        remainingSeconds = selectedMinutes * 60
-        Defaults[.pomodoroDuration] = selectedMinutes
+        remainingSeconds = selectedDurationSeconds
+        Defaults[.pomodoroDuration] = selectedDurationSeconds
     }
 
     func start() {
         if state == .finished || state == .idle {
-            remainingSeconds = selectedMinutes * 60
+            remainingSeconds = selectedDurationSeconds
         }
         state = .running
         startTimer()
@@ -94,7 +103,7 @@ class PomodoroManager: ObservableObject {
         state = .idle
         timerCancellable?.cancel()
         timerCancellable = nil
-        remainingSeconds = selectedMinutes * 60
+        remainingSeconds = selectedDurationSeconds
     }
 
     private func startTimer() {
@@ -125,9 +134,9 @@ class PomodoroManager: ObservableObject {
     }
 
     private func playCompletionSound() {
-        // Play system beep repeatedly (3 times) to alert the user
-        for i in 0..<3 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.5) {
+        // Play system beep repeatedly (5 times) to clearly alert the user
+        for i in 0..<5 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.4) {
                 NSSound.beep()
             }
         }
