@@ -1,6 +1,6 @@
 //
 //  ImageProcessingService.swift
-//  boringNotch
+//  NotchKit
 //
 //  Created by Alexander on 2025-10-16.
 //

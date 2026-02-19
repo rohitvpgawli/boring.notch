@@ -1,6 +1,6 @@
 //
 //  SettingsView.swift
-//  boringNotch
+//  NotchKit
 //
 //  Created by Richard Kunkli on 07/08/2024.
 //
@@ -132,8 +132,8 @@ struct GeneralSettings: View {
         guard let uuid = screen.displayUUID else { return nil }
         return (uuid, screen.localizedName)
     }
-    @EnvironmentObject var vm: BoringViewModel
-    @ObservedObject var coordinator = BoringViewCoordinator.shared
+    @EnvironmentObject var vm: NotchKitViewModel
+    @ObservedObject var coordinator = NotchKitViewCoordinator.shared
 
     @Default(.mirrorShape) var mirrorShape
     @Default(.showEmojis) var showEmojis
@@ -463,12 +463,12 @@ struct Charge: View {
 //}
 
 struct HUD: View {
-    @EnvironmentObject var vm: BoringViewModel
+    @EnvironmentObject var vm: NotchKitViewModel
     @Default(.inlineHUD) var inlineHUD
     @Default(.enableGradient) var enableGradient
     @Default(.optionKeyAction) var optionKeyAction
     @Default(.hudReplacement) var hudReplacement
-    @ObservedObject var coordinator = BoringViewCoordinator.shared
+    @ObservedObject var coordinator = NotchKitViewCoordinator.shared
     @State private var accessibilityAuthorized = false
     
     var body: some View {
@@ -594,7 +594,7 @@ struct HUD: View {
 struct Media: View {
     @Default(.waitInterval) var waitInterval
     @Default(.mediaController) var mediaController
-    @ObservedObject var coordinator = BoringViewCoordinator.shared
+    @ObservedObject var coordinator = NotchKitViewCoordinator.shared
     @Default(.hideNotchOption) var hideNotchOption
     @Default(.enableSneakPeek) private var enableSneakPeek
     @Default(.sneakPeekStyles) var sneakPeekStyles
@@ -874,7 +874,7 @@ struct About: View {
                 HStack(spacing: 30) {
                     Spacer(minLength: 0)
                     Button {
-                        if let url = URL(string: "https://github.com/TheBoredTeam/boring.notch") {
+                        if let url = URL(string: "https://github.com/notchkit/notchkit") {
                             NSWorkspace.shared.open(url)
                         }
                     } label: {
@@ -893,7 +893,7 @@ struct About: View {
             }
             VStack(spacing: 0) {
                 Divider()
-                Text("Made with 🫶🏻 by not so boring not.people")
+                Text("Made with 🫶🏻 by the NotchKit team")
                     .foregroundStyle(.secondary)
                     .padding(.top, 5)
                     .padding(.bottom, 7)
@@ -931,7 +931,7 @@ struct Shelf: View {
     var body: some View {
         Form {
             Section {
-                Defaults.Toggle(key: .boringShelf) {
+                Defaults.Toggle(key: .notchKitShelf) {
                     Text("Enable shelf")
                 }
                 Defaults.Toggle(key: .openShelfByDefault) {
@@ -1162,7 +1162,7 @@ struct Shelf: View {
 //}
 
 struct Appearance: View {
-    @ObservedObject var coordinator = BoringViewCoordinator.shared
+    @ObservedObject var coordinator = NotchKitViewCoordinator.shared
     @Default(.mirrorShape) var mirrorShape
     @Default(.sliderColor) var sliderColor
     @Default(.useMusicVisualizer) var useMusicVisualizer
@@ -1382,7 +1382,7 @@ struct Appearance: View {
 
             Section {
                 Defaults.Toggle(key: .showMirror) {
-                    Text("Enable boring mirror")
+                    Text("Enable mirror")
                 }
                     .disabled(!checkVideoInput())
                 Picker("Mirror shape", selection: $mirrorShape) {

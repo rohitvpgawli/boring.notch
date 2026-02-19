@@ -1,6 +1,6 @@
 //
-//  BoringViewCoordinator.swift
-//  boringNotch
+//  NotchKitViewCoordinator.swift
+//  NotchKit
 //
 //  Created by Alexander on 2024-11-20.
 //
@@ -47,8 +47,8 @@ struct ExpandedItem {
 }
 
 @MainActor
-class BoringViewCoordinator: ObservableObject {
-    static let shared = BoringViewCoordinator()
+class NotchKitViewCoordinator: ObservableObject {
+    static let shared = NotchKitViewCoordinator()
 
     @Published var currentView: NotchViews = .home
     @Published var rightPanelMode: RightPanelMode = .calendar

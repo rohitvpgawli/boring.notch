@@ -1,6 +1,6 @@
 //
 //  PomodoroManager.swift
-//  boringNotch
+//  NotchKit
 //
 //  Created by Cascade on 2025-02-17.
 //

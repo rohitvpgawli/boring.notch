@@ -1,6 +1,6 @@
 //
-//  BoringHeader.swift
-//  boringNotch
+//  NotchKitHeader.swift
+//  NotchKit
 //
 //  Created by Harsh Vardhan  Goswami  on 04/08/24.
 //
@@ -8,15 +8,15 @@
 import Defaults
 import SwiftUI
 
-struct BoringHeader: View {
-    @EnvironmentObject var vm: BoringViewModel
+struct NotchKitHeader: View {
+    @EnvironmentObject var vm: NotchKitViewModel
     @ObservedObject var batteryModel = BatteryStatusViewModel.shared
-    @ObservedObject var coordinator = BoringViewCoordinator.shared
+    @ObservedObject var coordinator = NotchKitViewCoordinator.shared
     @StateObject var tvm = ShelfStateViewModel.shared
     var body: some View {
         HStack(spacing: 0) {
             HStack {
-                if (!tvm.isEmpty || coordinator.alwaysShowTabs) && Defaults[.boringShelf] {
+                if (!tvm.isEmpty || coordinator.alwaysShowTabs) && Defaults[.notchKitShelf] {
                     TabSelectionView()
                 } else if vm.notchState == .open {
                     EmptyView()
@@ -93,7 +93,7 @@ struct BoringHeader: View {
                             .buttonStyle(PlainButtonStyle())
                         }
                         if Defaults[.showBatteryIndicator] {
-                            BoringBatteryView(
+                            NotchKitBatteryView(
                                 batteryWidth: 30,
                                 isCharging: batteryModel.isCharging,
                                 isInLowPowerMode: batteryModel.isInLowPowerMode,
@@ -128,5 +128,5 @@ struct BoringHeader: View {
 }
 
 #Preview {
-    BoringHeader().environmentObject(BoringViewModel())
+    NotchKitHeader().environmentObject(NotchKitViewModel())
 }
