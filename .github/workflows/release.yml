@@ -4,7 +4,7 @@ on:
     types: [created]
 
 concurrency:
-  group: build-boringnotch-${{ github.ref }}
+  group: build-notchkit-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -371,7 +371,7 @@ jobs:
 
             url "$DMG_URL"
             name "NotchKit"
-            desc "Not so NotchKit That Rocks 🎸🎶 "
+            desc "NotchKit — utility that rocks 🎸🎶"
             homepage "https://github.com/TheBoredTeam/notchkit"
 
             livecheck do
@@ -385,6 +385,8 @@ jobs:
             app "NotchKit.app"
 
             zap trash: [
+              "~/Library/Application Scripts/com.notchkit.app/",
+              "~/Library/Containers/com.notchkit.app/",
               "~/Library/Application Scripts/theboringteam.boringnotch/",
               "~/Library/Containers/theboringteam.boringnotch/",
             ]
@@ -402,7 +404,7 @@ jobs:
 
             url "$DMG_URL"
             name "NotchKit RC"
-            desc "Not so NotchKit That Rocks 🎸🎶 (Release Candidate)"
+            desc "NotchKit — utility that rocks 🎸🎶 (Release Candidate)"
             homepage "https://github.com/TheBoredTeam/notchkit"
 
             livecheck do
@@ -416,6 +418,8 @@ jobs:
             app "NotchKit.app"
 
             zap trash: [
+              "~/Library/Application Scripts/com.notchkit.app/",
+              "~/Library/Containers/com.notchkit.app/",
               "~/Library/Application Scripts/theboringteam.boringnotch/",
               "~/Library/Containers/theboringteam.boringnotch/",
             ]
@@ -465,7 +469,7 @@ jobs:
 
             url "$DMG_URL"
             name "NotchKit RC"
-            desc "Not so NotchKit That Rocks 🎸🎶 (Release Candidate)"
+            desc "NotchKit — utility that rocks 🎸🎶 (Release Candidate)"
             homepage "https://github.com/TheBoredTeam/notchkit"
 
             livecheck do
@@ -479,6 +483,8 @@ jobs:
             app "NotchKit.app"
 
             zap trash: [
+              "~/Library/Application Scripts/com.notchkit.app/",
+              "~/Library/Containers/com.notchkit.app/",
               "~/Library/Application Scripts/theboringteam.boringnotch/",
               "~/Library/Containers/theboringteam.boringnotch/",
             ]
