@@ -5,6 +5,7 @@ import IOKit.ps
 import SwiftUI
 
 /// A view model that manages and monitors the battery status of the device
+@MainActor
 class BatteryStatusViewModel: ObservableObject {
 
     private var wasCharging: Bool = false
@@ -23,7 +24,7 @@ class BatteryStatusViewModel: ObservableObject {
     @Published private(set) var statusText: String = ""
 
     private let managerBattery = BatteryActivityManager.shared
-    private var managerBatteryId: Int?
+    private var managerBatteryId: UUID?
 
     static let shared = BatteryStatusViewModel()
 
@@ -129,7 +130,7 @@ class BatteryStatusViewModel: ObservableObject {
 
     deinit {
         print("🔌 Cleaning up battery monitoring...")
-        if let managerBatteryId: Int = managerBatteryId {
+        if let managerBatteryId {
             managerBattery.removeObserver(byId: managerBatteryId)
         }
     }

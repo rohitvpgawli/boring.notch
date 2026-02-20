@@ -3,6 +3,7 @@ import IOKit.ps
 
 /// Manages and monitors battery status changes on the device
 /// - Note: This class uses the IOKit framework to monitor battery status
+@MainActor
 class BatteryActivityManager {
 
     static let shared = BatteryActivityManager()
@@ -15,7 +16,7 @@ class BatteryActivityManager {
     var onTimeToFullChargeChange: ((Int) -> Void)?
 
     private var batterySource: CFRunLoopSource?
-    private var observers: [(BatteryEvent) -> Void] = []
+    private var observers: [UUID: (BatteryEvent) -> Void] = [:]
     private var previousBatteryInfo: BatteryInfo?
     private var notificationQueue: [BatteryEvent] = []
     private var isProcessingNotifications = false
@@ -281,26 +282,23 @@ class BatteryActivityManager {
     /// Adds an observer to listen to battery changes
     /// - Parameter observer: The observer closure to be called on battery events
     /// - Returns: The ID of the observer for later removal
-    func addObserver(_ observer: @escaping (BatteryEvent) -> Void) -> Int {
-        observers.append(observer)
-        return observers.count - 1
+    func addObserver(_ observer: @escaping (BatteryEvent) -> Void) -> UUID {
+        let observerID = UUID()
+        observers[observerID] = observer
+        return observerID
     }
 
     /// Removes an observer by its ID
     /// - Parameter id: The ID of the observer to be removed
-    func removeObserver(byId id: Int) {
-        guard id >= 0 && id < observers.count else { return }
-        observers.remove(at: id)
+    func removeObserver(byId id: UUID) {
+        observers.removeValue(forKey: id)
     }
     
     /// Notifies all observers of a battery event
     /// - Parameter event: The battery event to notify
     private func notifyObservers(event: BatteryEvent) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            for observer in self.observers {
-                observer(event)
-            }
+        for observer in observers.values {
+            observer(event)
         }
     }
     
