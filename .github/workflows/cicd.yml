@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build Boring Notch
+    name: Build NotchKit
     strategy:
       matrix:
         platform:
@@ -23,7 +23,7 @@ jobs:
         xcode:
           - ^16
         scheme:
-          - boringNotch
+          - NotchKit
     runs-on: macos-latest
     steps:
     - name: Code Checkout
