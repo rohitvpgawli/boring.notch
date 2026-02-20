@@ -37,7 +37,7 @@ jobs:
           model: 'gpt-4o-mini'
           extra_prompt: |
             Please focus on:
-            You are a senior Swift/SwiftUI developer reviewing pull requests for the BoringNotch macOS application. This app customizes the MacBook notch area with 
+            You are a senior Swift/SwiftUI developer reviewing pull requests for the NotchKit macOS application. This app customizes the MacBook notch area with 
             various features like music controls and visualizer, calendar, camera mirror.
             When reviewing PRs, consider the following key aspects:
 
