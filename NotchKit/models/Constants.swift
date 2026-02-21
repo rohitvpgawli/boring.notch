@@ -180,6 +180,7 @@ extension Defaults.Keys {
     // MARK: Pomodoro
     static let showPomodoro = Key<Bool>("showPomodoro", default: true)
     static let pomodoroDuration = Key<Int>("pomodoroDurationSeconds", default: 25 * 60)
+    static let pomodoroTaskTitle = Key<String>("pomodoroTaskTitle", default: "")
     
     // MARK: Fullscreen Media Detection
     static let hideNotchOption = Key<HideNotchOption>("hideNotchOption", default: .nowPlayingOnly)

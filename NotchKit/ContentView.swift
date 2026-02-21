@@ -506,21 +506,32 @@ struct ContentView: View {
         let activeColor: Color = isFinished ? .red : .green
 
         HStack {
-            HStack(spacing: 4) {
-                Image(systemName: "timer")
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(activeColor)
-                Text(isFinished
-                     ? "0:00"
-                     : String(format: "%d:%02d", pomodoroManager.displayMinutes, pomodoroManager.displaySeconds))
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundColor(activeColor)
-                    .contentTransition(.numericText())
-                    .animation(.snappy, value: pomodoroManager.remainingSeconds)
+            VStack(alignment: .leading, spacing: 1) {
+                if pomodoroManager.hasTaskTitle {
+                    Text(pomodoroManager.sneakPeekTaskTitle)
+                        .font(.system(size: 10, weight: .semibold, design: .rounded))
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+                        .foregroundColor(activeColor.opacity(0.85))
+                        .frame(width: 96, alignment: .leading)
+                }
+
+                HStack(spacing: 4) {
+                    Image(systemName: "timer")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(activeColor)
+                    Text(isFinished
+                         ? "0:00"
+                         : String(format: "%d:%02d", pomodoroManager.displayMinutes, pomodoroManager.displaySeconds))
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundColor(activeColor)
+                        .contentTransition(.numericText())
+                        .animation(.snappy, value: pomodoroManager.remainingSeconds)
+                }
             }
             .opacity(isFinished ? (blinkingLiveActivity ? 0.2 : 1.0) : 1.0)
-            .frame(width: 76, alignment: .leading)
+            .frame(width: 96, alignment: .leading)
 
             Rectangle()
                 .fill(.black)

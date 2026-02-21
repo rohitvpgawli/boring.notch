@@ -14,10 +14,31 @@ struct PomodoroView: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            Text(pomodoroManager.state == .finished ? "Time's Up!" : "Focus")
+            Text(pomodoroManager.state == .finished ? "Time's Up!" : pomodoroManager.sneakPeekTaskTitle)
                 .font(.system(.subheadline, design: .rounded))
                 .fontWeight(.semibold)
                 .foregroundColor(pomodoroManager.state == .finished ? .red : .green)
+
+            TextField("What are you working on?", text: Binding(
+                get: { pomodoroManager.taskTitle },
+                set: { pomodoroManager.updateTaskTitle($0) }
+            ))
+            .textFieldStyle(.plain)
+            .font(.system(.subheadline, design: .rounded))
+            .foregroundColor(.white.opacity(0.9))
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(.white.opacity(0.08))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(.white.opacity(0.12), lineWidth: 1)
+            )
+            .disabled(!canAdjust)
+            .opacity(canAdjust ? 1 : 0.7)
+
 
             HStack(spacing: 12) {
                 Button {

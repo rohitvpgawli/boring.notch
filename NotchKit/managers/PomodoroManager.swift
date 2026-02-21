@@ -24,6 +24,7 @@ class PomodoroManager: ObservableObject {
     @Published var state: PomodoroState = .idle
     @Published var remainingSeconds: Int = 25 * 60
     @Published var selectedDurationSeconds: Int = Defaults[.pomodoroDuration]
+    @Published var taskTitle: String = Defaults[.pomodoroTaskTitle]
 
     // Durations in seconds: 30s, 1m, 2m, 5m, 10m, 15m, 20m, 25m, 30m, 45m, 60m
     static let availableDurations: [Int] = [30, 60, 120, 300, 600, 900, 1200, 1500, 1800, 2700, 3600]
@@ -32,6 +33,24 @@ class PomodoroManager: ObservableObject {
 
     private init() {
         remainingSeconds = selectedDurationSeconds
+        taskTitle = Defaults[.pomodoroTaskTitle]
+    }
+
+    var trimmedTaskTitle: String {
+        taskTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    var hasTaskTitle: Bool {
+        !trimmedTaskTitle.isEmpty
+    }
+
+    var sneakPeekTaskTitle: String {
+        hasTaskTitle ? trimmedTaskTitle : "Focus"
+    }
+
+    func updateTaskTitle(_ newTitle: String) {
+        taskTitle = newTitle
+        Defaults[.pomodoroTaskTitle] = newTitle
     }
 
     var displayMinutes: Int {
