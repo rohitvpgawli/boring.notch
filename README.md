@@ -1,15 +1,15 @@
 <h1 align="center">
   <br>
-  <a href="http://theboring.name"><img src="https://framerusercontent.com/images/RFK4vs0kn8pRMuOO58JeyoemXA.png?scale-down-to=256" alt="NotchKit" width="150"></a>
+  <a href="http://theboring.name"><img src="https://framerusercontent.com/images/RFK4vs0kn8pRMuOO58JeyoemXA.png?scale-down-to=256" alt="NothcKit" width="150"></a>
   <br>
-  NotchKit
+  NothcKit
   <br>
 </h1>
 
 
 <p align="center">
   <a title="Crowdin" target="_blank" href="https://crowdin.com/project/notchkit"><img src="https://badges.crowdin.net/notchkit/localized.svg"></a>
-  <img src="https://github.com/TheBoredTeam/notchkit/actions/workflows/cicd.yml/badge.svg" alt="TheNotchKit Build & Test" style="margin-right: 10px;" />
+  <img src="https://github.com/TheBoredTeam/notchkit/actions/workflows/cicd.yml/badge.svg" alt="TheNothcKit Build & Test" style="margin-right: 10px;" />
   <a href="https://discord.gg/c8JXA7qrPm">
     <img src="https://dcbadge.limes.pink/api/server/https://discord.gg/c8JXA7qrPm?style=flat" alt="Discord Badge" />
   </a>
@@ -18,9 +18,9 @@
   </a>
 </p>
 
-<!--Welcome to **NotchKit**, the coolest way to make your MacBook's notch the star of the show! Forget about those boring status bars—our notch turns into a dynamic music control center, complete with a snazzy visualizer and all the music controls you need. It's like having a mini concert right at the top of your screen! -->
+<!--Welcome to **NothcKit**, the coolest way to make your MacBook's notch the star of the show! Forget about those boring status bars—our notch turns into a dynamic music control center, complete with a snazzy visualizer and all the music controls you need. It's like having a mini concert right at the top of your screen! -->
 
-Say hello to **NotchKit**, the coolest way to make your MacBook’s notch the star of the show! Say goodbye to boring status bars: with NotchKit, your notch transforms into a dynamic music control center, complete with a vibrant visualizer and all the essential music controls you need. But that’s just the start! NotchKit also offers calendar integration, a handy file shelf with AirDrop support, a complete MacOS HUD replacement and more!
+Say hello to **NothcKit**, the coolest way to make your MacBook’s notch the star of the show! Say goodbye to boring status bars: with NothcKit, your notch transforms into a dynamic music control center, complete with a vibrant visualizer and all the essential music controls you need. But that’s just the start! NothcKit also offers calendar integration, a handy file shelf with AirDrop support, a complete MacOS HUD replacement and more!
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/2d5f69c1-6e7b-4bc2-a6f1-bb9e27cf88a8" alt="Demo GIF" />
@@ -152,7 +152,7 @@ We would like to express our gratitude to the authors and maintainers of the ope
 
 ## Notable Projects
 - **[MediaRemoteAdapter](https://github.com/ungive/mediaremote-adapter)** –  An open-source project that allowed us to use the Now Playing source in macOS 15.4+
-- **[NotchDrop](https://github.com/Lakr233/NotchDrop)** – An open-source project that has been instrumental in developing the first version of the "Shelf" feature in NotchKit.
+- **[NotchDrop](https://github.com/Lakr233/NotchDrop)** – An open-source project that has been instrumental in developing the first version of the "Shelf" feature in NothcKit.
 
 For a full list of licenses and attributions, please see the [Third-Party Licenses](./THIRD_PARTY_LICENSES.md) file.
 
@@ -160,6 +160,6 @@ For a full list of licenses and attributions, please see the [Third-Party Licens
 ### Website credits: [@himanshhhhuv](https://github.com/himanshhhhuv)
 
 - **SwiftUI**: For making us look like coding wizards.
-- **You**: For being awesome and checking out **notchkit**!
+- **You**: For being awesome and checking out **NothcKit**!
 
 
