@@ -284,9 +284,20 @@ struct ContentView: View {
                             .frame(width: 76, alignment: .trailing)
                         }
                         .frame(height: vm.effectiveClosedNotchHeight, alignment: .center)
-                      } else if coordinator.sneakPeek.show && Defaults[.inlineHUD] && (coordinator.sneakPeek.type != .music) && (coordinator.sneakPeek.type != .battery) && vm.notchState == .closed {
+                      } else if coordinator.sneakPeek.show && Defaults[.inlineHUD] && (coordinator.sneakPeek.type != .music) && (coordinator.sneakPeek.type != .battery) && (coordinator.sneakPeek.type != .reminder) && vm.notchState == .closed {
                           InlineHUD(type: $coordinator.sneakPeek.type, value: $coordinator.sneakPeek.value, icon: $coordinator.sneakPeek.icon, hoverAnimation: $isHovering, gestureProgress: $gestureProgress)
                               .transition(.opacity)
+                      } else if coordinator.sneakPeek.show && coordinator.sneakPeek.type == .reminder && vm.notchState == .closed {
+                          HStack(spacing: 8) {
+                              Image(systemName: coordinator.sneakPeek.icon.isEmpty ? "checklist" : coordinator.sneakPeek.icon)
+                                  .foregroundStyle(.white)
+                              Text(coordinator.sneakPeek.text)
+                                  .font(.caption)
+                                  .fontWeight(.medium)
+                                  .lineLimit(1)
+                                  .foregroundStyle(.gray)
+                          }
+                          .frame(height: vm.effectiveClosedNotchHeight, alignment: .center)
                       } else if !coordinator.expandingView.show && vm.notchState == .closed && (pomodoroManager.state == .running || pomodoroManager.state == .paused || pomodoroManager.state == .finished) && !vm.hideOnClosed {
                           PomodoroLiveActivity()
                               .frame(alignment: .center)
@@ -304,7 +315,7 @@ struct ContentView: View {
                        }
 
                       if coordinator.sneakPeek.show {
-                          if (coordinator.sneakPeek.type != .music) && (coordinator.sneakPeek.type != .battery) && !Defaults[.inlineHUD] && vm.notchState == .closed {
+                          if (coordinator.sneakPeek.type != .music) && (coordinator.sneakPeek.type != .battery) && (coordinator.sneakPeek.type != .reminder) && !Defaults[.inlineHUD] && vm.notchState == .closed {
                               SystemEventIndicatorModifier(
                                   eventType: $coordinator.sneakPeek.type,
                                   value: $coordinator.sneakPeek.value,
@@ -340,7 +351,7 @@ struct ContentView: View {
                       }
                   }
               }
-              .conditionalModifier((coordinator.sneakPeek.show && (coordinator.sneakPeek.type == .music) && vm.notchState == .closed && !vm.hideOnClosed && Defaults[.sneakPeekStyles] == .standard) || (coordinator.sneakPeek.show && (coordinator.sneakPeek.type != .music) && (vm.notchState == .closed))) { view in
+              .conditionalModifier((coordinator.sneakPeek.show && (coordinator.sneakPeek.type == .music) && vm.notchState == .closed && !vm.hideOnClosed && Defaults[.sneakPeekStyles] == .standard) || (coordinator.sneakPeek.show && (coordinator.sneakPeek.type != .music) && (coordinator.sneakPeek.type != .reminder) && (vm.notchState == .closed))) { view in
                   view
                       .fixedSize()
               }

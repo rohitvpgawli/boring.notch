@@ -18,6 +18,7 @@ enum SneakContentType {
     case mic
     case battery
     case download
+    case reminder
 }
 
 struct sneakPeek {
@@ -25,6 +26,7 @@ struct sneakPeek {
     var type: SneakContentType = .music
     var value: CGFloat = 0
     var icon: String = ""
+    var text: String = ""
 }
 
 struct SharedSneakPeek: Codable {
@@ -207,11 +209,15 @@ class NotchKitViewCoordinator: ObservableObject {
     }
 
     func toggleSneakPeek(
-        status: Bool, type: SneakContentType, duration: TimeInterval = 1.5, value: CGFloat = 0,
-        icon: String = ""
+        status: Bool,
+        type: SneakContentType,
+        duration: TimeInterval = 1.5,
+        value: CGFloat = 0,
+        icon: String = "",
+        text: String = ""
     ) {
         sneakPeekDuration = duration
-        if type != .music {
+        if type != .music && type != .reminder {
             // close()
             if !Defaults[.hudReplacement] {
                 return
@@ -223,6 +229,7 @@ class NotchKitViewCoordinator: ObservableObject {
                 self.sneakPeek.type = type
                 self.sneakPeek.value = value
                 self.sneakPeek.icon = icon
+                self.sneakPeek.text = text
             }
         }
 

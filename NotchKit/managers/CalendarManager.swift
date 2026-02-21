@@ -25,6 +25,8 @@ class CalendarManager: ObservableObject {
     @Published var reminderAuthorizationStatus: EKAuthorizationStatus = .notDetermined
     private var selectedCalendars: [CalendarModel] = []
     private let calendarService = CalendarService()
+    private var reminderPreviewTask: Task<Void, Never>?
+    private var lastShownReminderID: String?
 
     private var eventStoreChangedObserver: NSObjectProtocol?
 
@@ -33,10 +35,13 @@ class CalendarManager: ObservableObject {
         setupEventStoreChangedObserver()
         Task {
             await reloadCalendarAndReminderLists()
+            await refreshUpcomingReminderPreview()
         }
+        startReminderPreviewLoop()
     }
 
     deinit {
+        reminderPreviewTask?.cancel()
         if let observer = eventStoreChangedObserver {
             NotificationCenter.default.removeObserver(observer)
         }
@@ -50,6 +55,7 @@ class CalendarManager: ObservableObject {
         ) { [weak self] _ in
             Task {
                 await self?.reloadCalendarAndReminderLists()
+                await self?.refreshUpcomingReminderPreview()
             }
         }
     }
@@ -89,6 +95,7 @@ class CalendarManager: ObservableObject {
         case .fullAccess:
             NSLog("Full access")
             await reloadCalendarAndReminderLists()
+            await refreshUpcomingReminderPreview()
             events = await calendarService.events(
                 from: currentWeekStartDate,
                 to: Calendar.current.date(byAdding: .day, value: 1, to: currentWeekStartDate)!,
@@ -116,12 +123,14 @@ class CalendarManager: ObservableObject {
             self.reminderAuthorizationStatus = granted ? .fullAccess : .denied
             if granted {
                 await reloadCalendarAndReminderLists()
+                await refreshUpcomingReminderPreview()
             }
         case .restricted, .denied:
             NSLog("Reminder access denied or restricted")
         case .fullAccess:
             NSLog("Full access")
             await reloadCalendarAndReminderLists()
+            await refreshUpcomingReminderPreview()
         case .writeOnly:
             NSLog("Write only")
         @unknown default:
@@ -141,6 +150,10 @@ class CalendarManager: ObservableObject {
 
         // Update the local calendar objects that correspond to the selected ids
         selectedCalendars = allCalendars.filter { selectedCalendarIDs.contains($0.id) }
+
+        Task {
+            await refreshUpcomingReminderPreview()
+        }
     }
 
     func getCalendarSelected(_ calendar: CalendarModel) -> Bool {
@@ -200,5 +213,66 @@ class CalendarManager: ObservableObject {
             from: currentWeekStartDate,
             to: Calendar.current.date(byAdding: .day, value: 1, to: currentWeekStartDate)!,
             calendars: selectedCalendars.map { $0.id })
+        await refreshUpcomingReminderPreview()
+    }
+
+    private func startReminderPreviewLoop() {
+        reminderPreviewTask?.cancel()
+        reminderPreviewTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(60))
+                guard let self = self else { return }
+                await self.refreshUpcomingReminderPreview()
+            }
+        }
+    }
+
+    private func refreshUpcomingReminderPreview() async {
+        guard Defaults[.showCalendar] else { return }
+
+        let reminderStatus = EKEventStore.authorizationStatus(for: .reminder)
+        guard reminderStatus == .fullAccess else {
+            lastShownReminderID = nil
+            return
+        }
+
+        let now = Date()
+        guard let end = Calendar.current.date(byAdding: .minute, value: 30, to: now) else { return }
+
+        let reminderCalendarIDs = selectedCalendars
+            .filter(\.isReminder)
+            .map(\.id)
+
+        let upcoming = await calendarService.events(from: now, to: end, calendars: reminderCalendarIDs)
+            .filter { event in
+                guard event.type.isReminder else { return false }
+                if case .reminder(let completed) = event.type {
+                    return !completed
+                }
+                return false
+            }
+            .sorted { $0.start < $1.start }
+            .first
+
+        guard let reminder = upcoming else {
+            lastShownReminderID = nil
+            return
+        }
+
+        guard reminder.id != lastShownReminderID else { return }
+
+        lastShownReminderID = reminder.id
+
+        let minutesUntil = max(0, Int(ceil(reminder.start.timeIntervalSince(now) / 60)))
+        let subtitle = minutesUntil <= 1 ? "Due soon" : "Due in \(minutesUntil)m"
+
+        NotchKitViewCoordinator.shared.toggleSneakPeek(
+            status: true,
+            type: .reminder,
+            duration: 4.0,
+            icon: "checklist",
+            text: "\(subtitle): \(reminder.title)"
+        )
     }
 }
+
